@@ -1,0 +1,6 @@
+problog
+oct2py
+mpmath
+numpy
+scipy
+matplotlib
