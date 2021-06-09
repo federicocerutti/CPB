@@ -16,7 +16,7 @@ app = Flask(__name__, static_url_path='/static')
 def run_sl_problog():
     # if request.headers['Content-Type'] == 'text/plain':
     #     return "Text Message: " + request.data
-    app.logger.debug("data: " + request.data.decode("utf-8"))
+    # app.logger.debug("data: " + request.data.decode("utf-8"))
     res = SLProbLog(request.data.decode("utf-8"), True).run_beta_cov()
 
     jsonres = []
