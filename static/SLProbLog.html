@@ -32,7 +32,7 @@
 
     </script>
 
-    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css"/>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css"/>
     <!-- http://eurekastatistics.com//_embeds/beta/index.html on 7th September 2019 -->
     <style>
         .axis path, .axis line {
@@ -56,8 +56,6 @@
 </head>
 <body>
 
-<iframe src="SLVisualiser.html"></iframe>
-
 <h1>Insert your SLProbLog Code here</h1>
 <div id="editor">w(0.53, 0.33, 0.14, 0.5)::convoy.
 w(0.25, 0.15, 0.6, 0.5)::fight.
@@ -76,7 +74,7 @@ query(danger).
         var program = editor.getValue()
         $('#results').html("Running...")
 
-        $.ajax('http://127.0.0.1:5000/run', {
+        $.ajax('https://127.0.0.1:10001/sl/run', {
             type: 'POST',  // http method
             data: program,  // data to submit
             contentType: "text/plain",
