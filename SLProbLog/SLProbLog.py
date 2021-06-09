@@ -364,6 +364,8 @@ class SLProbLog:
         newlines = []
         idx = len(SingletonBetas.instance)
         for l in lines:
+            if len(l.strip()) > 0 and l.strip()[0] == '%':
+                continue
             label_prolog = l.split("::")
             if len(label_prolog) == 1:
                 newlines.append(l)
