@@ -24,7 +24,6 @@ from problog.evaluator import Semiring
 from problog.engine import DefaultEngine
 from problog.program import PrologString
 from problog import get_evaluatable
-from oct2py import octave
 from problog.formula import atom
 from problog.formula import conj
 from problog.logic import Constant

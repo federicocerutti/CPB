@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SLProbLog</title>
+    <style type="text/css" media="screen">
+        #editor {
+            /*position: absolute;*/
+            /*top: 0;*/
+            /*right: 0;*/
+            /*bottom: 0;*/
+            /*left: 0;*/
+            width: 600px;
+            height: 400px;
+            left: 10px;
+        }
+    </style>
+    <script src="snap.svg-min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        // http://eurekastatistics.com//_embeds/beta/index.html on 7th September 2019
+        function gamma(x) {
+            // Calculates the Gamma function for x.
+            // Thanks to http://stackoverflow.com/questions/15454183/how-to-make-a-function-that-computes-the-factorial-for-numbers-with-decimals.
+            return Math.sqrt(2 * Math.PI / x) * Math.pow((x + 1 / (12 * x - 1 / (10 * x))) / Math.E, x);
+        }
+
+        function betaPDF(x, alpha, beta) {
+            // The Beta probability density function.
+            return Math.pow(x, alpha - 1) * Math.pow(1 - x, beta - 1) * gamma(alpha + beta) / (gamma(alpha) * gamma(beta));
+        }
+
+    </script>
+
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css"/>
+    <!-- http://eurekastatistics.com//_embeds/beta/index.html on 7th September 2019 -->
+    <style>
+        .axis path, .axis line {
+            stroke: black;
+            fill: none;
+            shape-rendering: crispEdges;
+        }
+
+        .axis text {
+            font-family: sans-serif;
+            font-size: 14px;
+        }
+
+        .betaline {
+            fill: none;
+            stroke-width: 2;
+            stroke: rgba(0, 0, 255, 1);
+        }
+    </style>
+    <script src="slvisualiser.js"></script>
+</head>
+<body>
+
+<iframe src="SLVisualiser.html"></iframe>
+
+<h1>Insert your SLProbLog Code here</h1>
+<div id="editor">w(0.53, 0.33, 0.14, 0.5)::convoy.
+w(0.25, 0.15, 0.6, 0.5)::fight.
+w(0.53, 0.33, 0.14, 0.5)::explosion.
+
+w(0.1, 0.05, 0.85, 0.5)::danger :- convoy.
+w(0.2, 0.05, 0.75, 0.5)::danger :- fight.
+w(0.3, 0.05, 0.65, 0.5)::danger :- explosion.
+
+query(danger).
+</div>
+
+<script>
+    function runSLproblog() {
+        var editor = ace.edit("editor");
+        var program = editor.getValue()
+        $('#results').html("Running...")
+
+        $.ajax('http://127.0.0.1:5000/run', {
+            type: 'POST',  // http method
+            data: program,  // data to submit
+            contentType: "text/plain",
+            success: function (data, status, xhr) {
+                $('#results').html("");
+                data.forEach(function (v) {
+                    console.log(v);
+                    var q = v['query']
+                    var trianglesvg = 'svg' + q, betasvg = 'vis' + q, trianglewidth = 400, posD = [0, 540],
+                        betawidth = 500, betaheight = 380, betainitx = 20, betainity = 10, betamaxheight = 400,
+                        divbelief = "belief" + q, divdisbelief = "disbelief" + q, divuncertainty = "uncertainty" + q,
+                        divalpha = "alpha" + q, divbeta = "beta" + q, divqualitative = "qualitative" + q;
+
+                    $('#results').append("<h2>Query: " + q + "</h2>" +
+                        "<div style=\"width:100%; overflow: hidden;\">\n" +
+                        "    <div style=\"width:" + (trianglewidth + 60) + "px; float:left; padding-left:0px\">\n" +
+                        "        <svg id=\"" + trianglesvg + "\" style=\"width: " + (trianglewidth + 40) + "px; height: 650px;\">\n" +
+                        "            <defs></defs>\n" +
+                        "        </svg>\n" +
+                        "    </div>\n" +
+                        "\n" +
+                        "    <div style=\"padding-left: 90px;\">\n" +
+                        "        <table style=\"margin-bottom: 20px;\">\n" +
+                        "            <tr>\n" +
+                        "                <th align=\"left\" width=\"100px\">Belief:</th>\n" +
+                        "                <th align=\"left\" width=\"100px\">Disbelief:</th>\n" +
+                        "                <th align=\"left\" width=\"100px\">Uncertainty:</th>\n" +
+                        "            </tr>\n" +
+                        "            <tr>\n" +
+                        "                <th><div id=\"" + divbelief + "\" align=\"left\" style=\"font-weight:normal;font: 400 11px system-ui; padding: 3px;\">" + parseFloat(v["belief"]).toFixed(4) + "</div></th>\n" +
+                        "                <th>\n" +
+                        "                    <div id=\"" + divdisbelief + "\" align=\"left\"\n" +
+                        "                         style=\"font-weight:normal;font: 400 11px system-ui; padding: 3px;\">" + parseFloat(v["disbelief"]).toFixed(4) + "</div>\n" +
+                        "                <th><div id=\"" + divuncertainty + "\" align=\"left\" style=\"font-weight:normal;font: 400 11px system-ui; padding: 3px;\">" + parseFloat(v["uncertainty"]).toFixed(4) + "</div></th>\n" +
+                        "            </tr>\n" +
+                        "\n" +
+                        "        </table>\n" +
+                        "\n" +
+                        "        <div id=\"" + divqualitative + "\" style=\"top: 50px; left: 0px; margin-bottom: 50px\"></div>\n" +
+                        "\n" +
+                        "\n" +
+                        "        <table>\n" +
+                        "            <tr>\n" +
+                        "                <th align=\"left\">Alpha:</th>\n" +
+                        "                <th><div id=\"" + divalpha + "\" align=\"left\" style=\"font-weight:normal;font: 400 11px system-ui; padding: 3px;\"></div></th>\n" +
+                        "                <th align=\"left\">Beta:</th>\n" +
+                        "                <th><div id=\"" + divbeta + "\" align=\"left\" style=\"font-weight:normal;font: 400 11px system-ui; padding: 3px;\"></div></th>\n" +
+                        "            </tr>\n" +
+                        "\n" +
+                        "        </table>\n" +
+                        "\n" +
+                        "        <svg id=\"" + betasvg + "\" style=\"width: " + (betawidth + 40) + "px; height: " + betamaxheight + "px;\">\n" +
+                        "            <defs></defs>\n" +
+                        "        </svg>\n" +
+                        "\n" +
+                        "    </div>\n" +
+                        "\n" +
+                        "</div>" +
+                        "");
+
+                    drawSLOpinion(trianglesvg, betasvg, trianglewidth, posD, betawidth, betaheight, betainitx, betainity, betamaxheight, divbelief, divdisbelief, divuncertainty, divalpha, divbeta, divqualitative, parseFloat(v["belief"]), parseFloat(v["uncertainty"]));
+
+                    //$('#results').append(v['query'].concat(": &nbsp;&nbsp;&nbsp; w(", v['belief'], ", ", v['disbelief'], ", ", v['uncertainty'], ", ", v['base'], ")"))
+
+                    //$('#results').append("<br/>")
+                })
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                $('#results').html('Error' + errorMessage);
+            }
+        });
+    }
+</script>
+
+
+<button type="button" id="runbutton" onclick="runSLproblog()"
+        style="font-size: 16px; position: relative; top: 20px; left: 50px;">Run
+</button>
+
+<div id="results" style="position: relative; top: 50px; left: 50px;"></div>
+
+<script src="src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/chrome");
+    editor.session.setMode("ace/mode/prolog");
+</script>
+</body>
+</html>
