@@ -6,7 +6,7 @@ from flask_cors import cross_origin
 import logging
 logging.basicConfig(level=logging.DEBUG)
 from SLProbLog.SLProbLog import SLProbLog
-
+from waitress import serve
 
 app = Flask(__name__, static_url_path='/static')
 
@@ -33,4 +33,4 @@ def run_sl_problog():
     return jsonify(jsonres)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    serve(app, host='127.0.0.1', port=10001)
