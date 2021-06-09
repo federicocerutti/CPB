@@ -74,7 +74,7 @@ query(danger).
         var program = editor.getValue()
         $('#results').html("Running...")
 
-        $.ajax('http://127.0.0.1:10001/run', {
+        $.ajax('https://tiresia.unibs.it/sl/run', {
             type: 'POST',  // http method
             data: program,  // data to submit
             contentType: "text/plain",
