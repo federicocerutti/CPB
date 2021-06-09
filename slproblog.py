@@ -28,7 +28,7 @@ from SLProbLog.SLProbLog import SLProbLog
 
 def outprint(res):
     for k,v in res.items():
-        if isinstance(v, list):
+        if isinstance(v, tuple):
             print("%-12s [%-23s %-23s %-23s %s]\t" % (k, mpmath.nstr(v[0], mpmath.mp.dps),
                                                             mpmath.nstr(v[1], mpmath.mp.dps),
                                                             mpmath.nstr(v[2], mpmath.mp.dps),
@@ -56,4 +56,4 @@ if __name__ == '__main__':
     if args.subjective_logic_operators:
         outprint(SLProbLog(p, args.subjective_logic_output).run_SL())
     else:
-        outprint(SLProbLog(p, args.subjective_logic_output).run_beta())
+        outprint(SLProbLog(p, args.subjective_logic_output).run_beta_cov())

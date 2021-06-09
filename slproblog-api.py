@@ -17,11 +17,11 @@ def run_sl_problog():
     # if request.headers['Content-Type'] == 'text/plain':
     #     return "Text Message: " + request.data
     app.logger.debug("data: " + request.data.decode("utf-8"))
-    res = SLProbLog(request.data.decode("utf-8"), True).run_KL()
+    res = SLProbLog(request.data.decode("utf-8"), True).run_beta_cov()
 
     jsonres = []
     for k,v in res.items():
-        if isinstance(v, list):
+        if isinstance(v, tuple):
             newel = {}
             newel['query'] = k
             newel['belief'] = mpmath.nstr(v[0], mpmath.mp.dps)
