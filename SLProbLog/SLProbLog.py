@@ -661,12 +661,15 @@ class SLProbLog:
         formula = knowledge.create_from(db, engine=engine, database=db)
 
         mytree = Tree(SingletonBetas.instance)
-        mytree.from_formula(formula)
+        try:
+            mytree.from_formula(formula)
+        except ValueError as e:
+            pass
 
         resunordered = {}
         for k, v in formula.queries():
             if v is None:
-                resunordered[str(k)] = BetaSemiring().parse(BetaSemiring().zero())
+                resunordered[str(k)] = from_sl_opinion([0, 0, 1, 0.5])
             else:
                 mytreecopy = copy.deepcopy(mytree)
                 resmytree = mytreecopy.compute_query(v)
